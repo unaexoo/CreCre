@@ -1,9 +1,97 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="false" userDefinedModelVersionIdentifier="">
-    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
-        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="24G90" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Clean" representedClassName="Clean" syncable="YES" codeGenerationType="class">
+        <attribute name="cleanType" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="gecko" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Gecko" inverseName="cleans" inverseEntity="Gecko"/>
     </entity>
-    <elements>
-        <element name="Item" positionX="-63" positionY="-18" width="128" height="44"/>
-    </elements>
+    <entity name="Diary" representedClassName="Diary" syncable="YES" codeGenerationType="class">
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="imagePath" optional="YES" attributeType="String"/>
+        <attribute name="tittle" optional="YES" attributeType="String"/>
+        <relationship name="gecko" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Gecko" inverseName="diaries" inverseEntity="Gecko"/>
+    </entity>
+    <entity name="Egg" representedClassName="Egg" syncable="YES" codeGenerationType="class">
+        <attribute name="countEgg" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="gecko" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Gecko" inverseName="eggs" inverseEntity="Gecko"/>
+    </entity>
+    <entity name="Feed" representedClassName="Feed" syncable="YES" codeGenerationType="class">
+        <attribute name="amountUnit" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="amountValue" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="ateWell" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="kind" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="note" optional="YES" attributeType="String"/>
+        <attribute name="size" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="gecko" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Gecko" inverseName="feeds" inverseEntity="Gecko"/>
+    </entity>
+    <entity name="Gecko" representedClassName="Gecko" syncable="YES" codeGenerationType="class">
+        <attribute name="adpotedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="birthDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="imagePath" optional="YES" attributeType="String"/>
+        <attribute name="morpth" optional="YES" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="sex" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="childrenFromDam" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Gecko" inverseName="dam" inverseEntity="Gecko"/>
+        <relationship name="childrenFromSire" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Gecko" inverseName="sire" inverseEntity="Gecko"/>
+        <relationship name="cleans" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Clean" inverseName="gecko" inverseEntity="Clean"/>
+        <relationship name="dam" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Gecko" inverseName="childrenFromDam" inverseEntity="Gecko"/>
+        <relationship name="diaries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Diary" inverseName="gecko" inverseEntity="Diary"/>
+        <relationship name="eggs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Egg" inverseName="gecko" inverseEntity="Egg"/>
+        <relationship name="feeds" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Feed" inverseName="gecko" inverseEntity="Feed"/>
+        <relationship name="mists" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Mist" inverseName="gecko" inverseEntity="Mist"/>
+        <relationship name="observations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Observation" inverseName="gecko" inverseEntity="Observation"/>
+        <relationship name="routines" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Routine" inverseName="gecko" inverseEntity="Routine"/>
+        <relationship name="sire" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Gecko" inverseName="childrenFromSire" inverseEntity="Gecko"/>
+        <relationship name="weights" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Weight" inverseName="gecko" inverseEntity="Weight"/>
+    </entity>
+    <entity name="Mist" representedClassName="Mist" syncable="YES" codeGenerationType="class">
+        <attribute name="count" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="timeSlot" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="gecko" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Gecko" inverseName="mists" inverseEntity="Gecko"/>
+    </entity>
+    <entity name="Observation" representedClassName="Observation" syncable="YES" codeGenerationType="class">
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="note" optional="YES" attributeType="String"/>
+        <relationship name="gecko" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Gecko" inverseName="observations" inverseEntity="Gecko"/>
+    </entity>
+    <entity name="Routine" representedClassName="Routine" syncable="YES" codeGenerationType="class">
+        <attribute name="enabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="hour" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="intervalDays" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="lastCompletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastFireAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="minute" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="repeatMode" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="timeSlot" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="weekdayMask" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="gecko" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Gecko" inverseName="routines" inverseEntity="Gecko"/>
+    </entity>
+    <entity name="Setting" representedClassName="Setting" syncable="YES" codeGenerationType="class">
+        <attribute name="allowNotification" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="notifyFeedEnabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="notifyMistEnabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="notifyWeightEnabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="Weight" representedClassName="Weight" syncable="YES" codeGenerationType="class">
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="grams" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="gecko" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Gecko" inverseName="weights" inverseEntity="Gecko"/>
+    </entity>
 </model>
