@@ -15,10 +15,16 @@ struct PersistenceController {
     static let preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
-//        for _ in 0..<10 {
-//            let newItem = Item(context: viewContext)
-//            newItem.timestamp = Date()
-//        }
+        for i in 0..<5 {
+            let gecko = Gecko(context: viewContext)
+            gecko.id = UUID()
+            gecko.name = "도마뱀\(i + 1)"
+            gecko.sex = Int16.random(in: 0...2) 
+            gecko.birthDate = Date()
+            gecko.adoptedDate = Date()
+            gecko.morph = "Normal"
+        }
+        
         do {
             try viewContext.save()
         } catch {

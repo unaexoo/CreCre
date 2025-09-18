@@ -11,7 +11,7 @@
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="imagePath" optional="YES" attributeType="String"/>
-        <attribute name="tittle" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="gecko" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Gecko" inverseName="diaries" inverseEntity="Gecko"/>
     </entity>
     <entity name="Egg" representedClassName="Egg" syncable="YES" codeGenerationType="class">
@@ -32,11 +32,11 @@
         <relationship name="gecko" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Gecko" inverseName="feeds" inverseEntity="Gecko"/>
     </entity>
     <entity name="Gecko" representedClassName="Gecko" syncable="YES" codeGenerationType="class">
-        <attribute name="adpotedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="adoptedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="birthDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="id" attributeType="String"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="imagePath" optional="YES" attributeType="String"/>
-        <attribute name="morpth" optional="YES" attributeType="String"/>
+        <attribute name="morph" optional="YES" attributeType="String"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="sex" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="childrenFromDam" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Gecko" inverseName="dam" inverseEntity="Gecko"/>
@@ -49,8 +49,11 @@
         <relationship name="mists" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Mist" inverseName="gecko" inverseEntity="Mist"/>
         <relationship name="observations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Observation" inverseName="gecko" inverseEntity="Observation"/>
         <relationship name="routines" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Routine" inverseName="gecko" inverseEntity="Routine"/>
-        <relationship name="sire" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Gecko" inverseName="childrenFromSire" inverseEntity="Gecko"/>
+        <relationship name="sire" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Gecko" inverseName="childrenFromSire" inverseEntity="Gecko"/>
         <relationship name="weights" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Weight" inverseName="gecko" inverseEntity="Weight"/>
+    </entity>
+    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <entity name="Mist" representedClassName="Mist" syncable="YES" codeGenerationType="class">
         <attribute name="count" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>

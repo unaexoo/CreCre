@@ -16,23 +16,33 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             HomeView()
-                .tabItem { Label(TabItem.home.title, systemImage: TabItem.home.iconImage) }
+                .tabItem {
+                    Label(TabItem.home.title, systemImage: TabItem.home.iconImage)
+                }
                 .tag(TabItem.home)
 
             DiaryView()
-                .tabItem { Label(TabItem.diary.title, systemImage: TabItem.diary.iconImage) }
+                .tabItem {
+                    Label(TabItem.diary.title, systemImage:  TabItem.diary.iconImage)
+                }
                 .tag(TabItem.diary)
 
             StaticsView()
-                .tabItem { Label(TabItem.statics.title, systemImage: TabItem.statics.iconImage) }
+                .tabItem {
+                    Label(TabItem.statics.title, systemImage: TabItem.statics.iconImage)
+                }
                 .tag(TabItem.statics)
 
             MapView()
-                .tabItem { Label(TabItem.map.title, systemImage: TabItem.map.iconImage) }
+                .tabItem {
+                    Label(TabItem.map.title, systemImage: TabItem.map.iconImage)
+                }
                 .tag(TabItem.map)
 
             SettingView()
-                .tabItem { Label(TabItem.setting.title, systemImage: TabItem.setting.iconImage) }
+                .tabItem {
+                    Label(TabItem.setting.title, systemImage: TabItem.setting.iconImage)
+                }
                 .tag(TabItem.setting)
         }
     }
