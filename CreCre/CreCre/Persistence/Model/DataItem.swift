@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-enum Sex: Int16, CaseIterable {
+enum Sex: Int16, CaseIterable, Identifiable {
     case unknown = 0
     case male = 1
     case female = 2
@@ -39,6 +39,10 @@ enum Sex: Int16, CaseIterable {
                 .foregroundStyle(.sub)
                 .frame(width: 20, height: 20)
         }
+    }
+
+    var id: Int16 {
+        self.rawValue
     }
 }
 

@@ -34,84 +34,97 @@ struct HomeView: View {
     }
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: .defaultSpacing) {
-                HStack {
-                    Text("CreCre")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.main)
-
-                    Spacer()
-
-                    Button {
-                        // TODO: 개체 추가 로직
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.title)
+        NavigationStack{
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: .defaultSpacing) {
+                    HStack {
+                        Text("CreCre")
+                            .font(.largeTitle)
                             .fontWeight(.bold)
-                            .foregroundStyle(.yellow)
-                            .padding(.smallSpacing)
-                    }
-                    .glassEffect()
-                }
-                .padding(.horizontal, .defaultSpacing)
-
-                LazyVGrid(columns: columns, spacing: .defaultSpacing) {
-                    let dates = weekDays()
-                    ForEach(dates.indices, id: \.self) { index in
-                        let date = dates[index]
-                        let isSelected = date.isSameDay(as: selectedDate)
-
-                        VStack(spacing: .smallSpacing) {
-                            Text(weekNames[index])
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundStyle(.accent)
-
-                            Text("\(date.day)")
-                                .font(.headline)
-                                .fontWeight(isSelected ? .bold : .regular)
-                                .foregroundStyle(isSelected ? .white : .primary.opacity(0.8))
+                            .foregroundStyle(.main)
+                        
+                        Spacer()
+                        
+                        NavigationLink {
+                            AddGeckoView()
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.main)
                                 .padding(.smallSpacing)
-                                .background {
-                                    if isSelected {
-                                        Circle()
-                                            .fill(.accent)
-                                            .matchedGeometryEffect(id: "backgroundCircle", in: namespace)
-                                    }
-                                }
                         }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            withAnimation(.spring()) {
-                                selectedDate = date
+                        .glassEffect()
+                    }
+                    .padding(.horizontal, .defaultSpacing)
+                    
+                    LazyVGrid(columns: columns, spacing: .defaultSpacing) {
+                        let dates = weekDays()
+                        ForEach(dates.indices, id: \.self) { index in
+                            let date = dates[index]
+                            let isSelected = date.isSameDay(as: selectedDate)
+                            
+                            VStack(spacing: .smallSpacing) {
+                                Text(weekNames[index])
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                    .foregroundStyle(.accent)
+                                
+                                Text("\(date.day)")
+                                    .font(.headline)
+                                    .fontWeight(isSelected ? .bold : .regular)
+                                    .foregroundStyle(isSelected ? .white : .primary.opacity(0.8))
+                                    .padding(.smallSpacing)
+                                    .background {
+                                        if isSelected {
+                                            Circle()
+                                                .fill(.accent)
+                                                .matchedGeometryEffect(id: "backgroundCircle", in: namespace)
+                                        }
+                                    }
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                withAnimation(.spring()) {
+                                    selectedDate = date
+                                }
                             }
                         }
                     }
+                    .padding(.horizontal, .defaultSpacing)
+                    
+                    ForEach(geckos) { gecko in
+                        GeckoCardView(gecko: gecko)
+                            .padding(.horizontal, .defaultSpacing)
+                    }
                 }
-                .padding(.horizontal, .defaultSpacing)
-
-                ForEach(geckos) { gecko in
-                    GeckoCardView(gecko: gecko)
-                        .padding(.horizontal, .defaultSpacing)
-                }
+                .padding(.vertical)
             }
-            .padding(.vertical)
         }
 
     }
 }
+extension Gecko {
+    public var lastWeight: Double? {
+        guard let weightsSet = self.weights as? Set<Weight>, !weightsSet.isEmpty else {
+            return nil
+        }
 
-// MARK: - 개별 개체 카드 뷰
+        let sorted = weightsSet.sorted {
+            ($0.date ?? Date.distantPast) > ($1.date ?? Date.distantPast)
+        }
+
+        return sorted.first?.grams
+    }
+
+}
+
 struct GeckoCardView: View {
     let gecko: Gecko
 
     var body: some View {
         HStack(spacing: .defaultSpacing) {
             GeckoImageView(gecko: gecko)
-                .frame(width: 130, height: 150)
-                .clipShape(RoundedRectangle(cornerRadius: .defaultSpacing))
 
             VStack(alignment: .leading, spacing: .defaultSpacing) {
                 HStack(spacing: .smallSpacing) {
@@ -125,9 +138,11 @@ struct GeckoCardView: View {
 
                     Spacer()
 
-                    Text("38g")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    if let weight = gecko.lastWeight {
+                        Text(String(format: "%.1fg", weight))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 Text(gecko.morph ?? "모프 정보 없음")
                     .font(.subheadline)
@@ -153,7 +168,7 @@ struct GeckoCardView: View {
                             .foregroundStyle(.secondary)
                         
                         Circle()
-                            .frame(width: 10, height: 10)
+                            .frame(width: 15, height: 15)
                             .foregroundColor(.white)
                             .overlay (
                                 Circle()
@@ -181,23 +196,15 @@ struct GeckoCardView: View {
     }
 }
 
-
-extension Date {
-    var day: Int {
-        Calendar.current.component(.day, from: self)
-    }
-
-    func isSameDay(as otherDate: Date) -> Bool {
-        return Calendar.current.isDate(self, inSameDayAs: otherDate)
-    }
-}
-
-
 #Preview {
     let controller = PersistenceController.preview
-    let context = CoreDataManager.shared.context
-
+    let context = controller.container.viewContext
     let sampleImagePath = savePreviewImage(name: "sample-gecko")
+
+    let namuWeights = Weight(context: context)
+    namuWeights.id = UUID()
+    namuWeights.grams = 33.8
+    namuWeights.date = Date()
 
     // 개체 1: 나무
     let namu = Gecko(context: context)
@@ -206,7 +213,7 @@ extension Date {
     namu.morph = "핀스트라이프 할리퀸"
     namu.imagePath = sampleImagePath
     namu.sex = 1
-
+    namu.addToWeights(namuWeights)
     // 개체 2: 뿌리
     let ppuri = Gecko(context: context)
     ppuri.id = UUID()
@@ -223,7 +230,6 @@ extension Date {
     daechu.imagePath = nil
     daechu.sex = 0
 
-    // 3. HomeView()를 호출하고 Core Data 환경을 설정합니다.
     return HomeView()
         .environment(\.managedObjectContext, context)
 }

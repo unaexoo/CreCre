@@ -44,15 +44,16 @@ struct GeckoImageView: View {
         // 없으면 (imagePath가 nil이거나, 파일이 없는 경우) 기본 아이콘을 보여줌
         if let image = loadedImage {
             image
-                .resizable() // 프레임에 맞게 크기 조절 가능하도록 설정
-                .scaledToFill() // 프레임을 꽉 채우도록 비율 유지하며 확대/축소
+                .resizable()
+                .scaledToFill()
+                .clipShape(Circle())
+                .frame(width: 130, height: 130)
         } else {
-            // 이미지가 없을 때 보여줄 플레이스홀더
-            Image(systemName: "photo.fill")
+            Image(systemName: "lizard.circle.fill")
                 .resizable()
                 .scaledToFit()
-                .foregroundStyle(.gray.opacity(0.3))
-                .padding() // 아이콘이 너무 꽉 차지 않도록 약간의 여백 추가
+                .frame(width: 130, height: 130)
+                .foregroundStyle(.main)
         }
     }
 }
