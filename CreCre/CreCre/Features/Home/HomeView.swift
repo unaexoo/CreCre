@@ -36,7 +36,7 @@ struct HomeView: View {
     var body: some View {
         NavigationStack{
             ScrollView(showsIndicators: false) {
-                VStack(spacing: .defaultSpacing) {
+                VStack(spacing: .largeSpacing) {
                     HStack {
                         Text("CreCre")
                             .font(.largeTitle)
@@ -116,7 +116,6 @@ extension Gecko {
 
         return sorted.first?.grams
     }
-
 }
 
 struct GeckoCardView: View {
@@ -144,6 +143,7 @@ struct GeckoCardView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                
                 Text(gecko.morph ?? "모프 정보 없음")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)

@@ -42,6 +42,40 @@ final class GeckoService {
         return gecko
     }
 
+    func updateGecko(
+        _ gecko: Gecko,
+        name: String,
+        sex: Sex,
+        birthDate: Date,
+        adoptedDate: Date?,
+        morph: String?,
+        imagePath: String?,
+        sire: Gecko? = nil,
+        dam: Gecko? = nil
+    ){
+        gecko.name = name
+        gecko.sex = sex.rawValue
+        gecko.birthDate = birthDate
+        gecko.adoptedDate = adoptedDate
+        gecko.morph = morph
+        gecko.imagePath = imagePath
+        gecko.sire = sire
+        gecko.dam = dam
+        coreDataManager.saveContext()
+    }
+
+    func findGecko(byName name: String) -> Gecko? {
+        let request = NSFetchRequest<Gecko>(entityName: "Gecko")
+        request.predicate = NSPredicate(format: "name == %@", name)
+        
+        do {
+            return try coreDataManager.context.fetch(request).first
+        } catch {
+            print("Error finding gecko with name \(name): \(error)")
+            return nil
+        }
+    }
+
     func fetchAllGeckos(sortedBy key: String = "name", ascending: Bool = true) -> [Gecko] {
         let request = NSFetchRequest<Gecko>(entityName: "Gecko")
         request.sortDescriptors = [NSSortDescriptor(key: key, ascending: ascending)]

@@ -11,6 +11,18 @@ import PhotosUI
 
 struct AddGeckoView: View {
     @Environment(\.dismiss) var dismiss
+
+    private enum Field: Hashable {
+        case name
+        case morph
+        case sire
+        case dam
+    }
+
+    enum Mode {
+        case add
+        case edit
+    }
     // 이미지 피커 관련
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var selectedImage: Image?
@@ -30,19 +42,28 @@ struct AddGeckoView: View {
     @State private var sireName: String = ""
     @State private var damName: String = ""
 
-    private enum Field: Hashable {
-        case name
-        case morph
-        case sire
-        case dam
-    }
-
     @FocusState private var focusedField: Field?
+
+    var type: Mode
+    var gecko: Gecko?
+
+    init(type: Mode = .add, gecko: Gecko? = nil) {
+        self.type = type
+        self.gecko = gecko
+
+        _name = State(initialValue: gecko?.name ?? "")
+        _morph = State(initialValue: gecko?.morph ?? "")
+        _selectedSex = State(initialValue: Sex(rawValue: gecko?.sex ?? 0) ?? .unknown)
+        _birthDate = State(initialValue: gecko?.birthDate ?? Date())
+        _adoptionDate = State(initialValue: gecko?.adoptedDate ?? Date())
+        _sireName = State(initialValue: gecko?.sire?.name ?? "")
+        _damName = State(initialValue: gecko?.dam?.name ?? "")
+    }
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: .defaultSpacing) {
+                VStack(spacing: .largeSpacing) {
                     PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
                         VStack(spacing: .smallSpacing) {
                             if let selectedImage {
@@ -82,7 +103,6 @@ struct AddGeckoView: View {
                                 focusedField = .morph
                             }
 
-                        Spacer()
 
                         FormField(title: "모프", placeholder: "ex) 할리퀸", text: $morph)
                             .focused($focusedField, equals: .morph)
@@ -91,7 +111,6 @@ struct AddGeckoView: View {
                             }
                     }
 
-                    Spacer()
 
                     // 성별
                     VStack(alignment: .leading, spacing: .smallSpacing) {
@@ -124,8 +143,6 @@ struct AddGeckoView: View {
                         }
                     }
 
-                    Spacer()
-
                     // 생일, 입양일
                     HStack(spacing: .defaultSpacing){
                         DateFieldView(title: "생일", date: $birthDate)
@@ -135,46 +152,40 @@ struct AddGeckoView: View {
                         DateFieldView(title: "입양일", date: $adoptionDate)
                     }
 
-                    Spacer()
                     // 부모 정보
                     VStack(alignment: .leading, spacing: .smallSpacing) {
-                        HStack {
+                        Section {
+                            HStack(spacing: .defaultSpacing) {
+                                FormField(title: "아빠 마뱀", placeholder: "아빠 마뱀이 이름", text: $sireName)
+                                    .focused($focusedField, equals: .sire)
+                                    .onSubmit {
+                                        focusedField = .dam
+                                    }
+
+                                Spacer()
+
+                                FormField(title: "엄마 마뱀", placeholder: "엄마 마뱀이 이름", text: $damName)
+                                    .focused($focusedField, equals: .dam)
+                                    .onSubmit {
+                                        focusedField = nil
+                                    }
+                            }
+                        } header: {
                             Text("부모 정보")
-                                .font(.headline)
-                                .foregroundStyle(.secondary)
-
-                            Spacer()
-
-                            Text("부모 정보를 모르는 경우 생략 가능")
+                        } footer: {
+                            Text("부모 정보를 모르는 경우 생략할 수 있습니다.")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
-                        HStack(spacing: .defaultSpacing) {
-                            FormField(title: "아빠 마뱀",placeholder: "아빠 마뱀이 이름" ,text: $sireName)
-                                .focused($focusedField, equals: .sire)
-                                .onSubmit {
-                                    focusedField = .dam
-                                }
-
-                            Spacer()
-
-                            FormField(title: "엄마 마뱀", placeholder: "엄마 마뱀이 이름" ,text: $damName)
-                                .focused($focusedField, equals: .dam)
-                                .onSubmit {
-                                    focusedField = nil
-                                }
-                        }
+                        .textCase(nil)
                     }
-
-                    Spacer()
-
                 }
                 .padding()
             }
             .safeAreaInset(edge: .bottom) {
                 Button {
-                       focusedField = nil
-                       saveGecko()
+                    focusedField = nil
+                    saveGecko()
                 } label: {
                     Text("저장")
                         .font(.title3).fontWeight(.bold)
@@ -189,7 +200,7 @@ struct AddGeckoView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("도마뱀 프로필 등록하기")
+                    Text(type == .add ? "도마뱀 프로필 등록하기" : "도마뱀 프로필 수정하기")
                         .font(.title2)
                         .foregroundColor(.accent)
                 }
@@ -222,6 +233,25 @@ struct FormField: View {
 }
 
 private extension AddGeckoView {
+    func loadImageEditMode() {
+        guard type == .edit, let imagePath = gecko?.imagePath, !imagePath.isEmpty else {
+            return
+        }
+
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return
+        }
+        let fileURL = documentsDirectory.appendingPathComponent(imagePath)
+
+        do {
+            let imageData = try Data(contentsOf: fileURL)
+            if let uiImage = UIImage(data: imageData) {
+                self.selectedImage = Image(uiImage: uiImage)
+            }
+        } catch {
+            print("Error: 이미지를 로드하는 데 실패했습니다.: \(error)")
+        }
+    }
     func saveImageToDocuments(data: Data) -> String? {
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             print("Error: Documents 디렉토리를 찾을 수 없습니다.")
@@ -243,18 +273,41 @@ private extension AddGeckoView {
     func saveGecko() {
         var imagePath: String? = nil
 
+        if type == .edit {
+            imagePath = gecko?.imagePath
+        }
+
         if let photoData = selectedPhotoData {
             imagePath = saveImageToDocuments(data: photoData)
         }
 
-        GeckoService.shared.addGecko(
-            name: name,
-            sex: selectedSex,
-            birthDate: birthDate,
-            adoptedDate: adoptionDate,
-            morph: morph.isEmpty ? nil : morph,
-            imagePath: imagePath
-        )
+        let sire = sireName.isEmpty ? nil : GeckoService.shared.findGecko(byName: sireName)
+        let dam = damName.isEmpty ? nil : GeckoService.shared.findGecko(byName: damName)
+
+        if type == .add {
+            GeckoService.shared.addGecko(
+                name: name,
+                sex: selectedSex,
+                birthDate: birthDate,
+                adoptedDate: adoptionDate,
+                morph: morph.isEmpty ? nil : morph,
+                imagePath: imagePath,
+                sire: sire,
+                dam: dam
+            )
+        } else if let geckoToUpdate = gecko {
+            GeckoService.shared.updateGecko(
+                geckoToUpdate,
+                name: name,
+                sex: selectedSex,
+                birthDate: birthDate,
+                adoptedDate: adoptionDate,
+                morph: morph.isEmpty ? nil : morph,
+                imagePath: imagePath,
+                sire: sire,
+                dam: dam
+            )
+        }
 
         dismiss()
     }

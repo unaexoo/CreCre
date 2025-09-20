@@ -9,15 +9,16 @@ import Foundation
 import UIKit
 
 extension CGFloat {
-  // MARK: - Spacing
-  static let smallSpacing: CGFloat = 8
-  static let defaultSpacing: CGFloat = UIDevice.isPad ? 20 : 16
-  static let bottomInset: CGFloat = 33
+    // MARK: - Spacing
+    static let smallSpacing: CGFloat = 8
+    static let defaultSpacing: CGFloat = UIDevice.isPad ? 20 : 16
+    static let bottomInset: CGFloat = 33
+    static let largeSpacing: CGFloat = 32
 
-  // MARK: - CornerRadius
-  static let smallRadius: CGFloat = 10
-  static let defaultRadius: CGFloat = 20
+    // MARK: - CornerRadius
+    static let smallRadius: CGFloat = 10
+    static let defaultRadius: CGFloat = 20
 
-  // MARK: - FontSize
-  static let defaultFontSize: CGFloat = UIDevice.isPad ? 23 : 18
+    // MARK: - FontSize
+    static let defaultFontSize: CGFloat = UIDevice.isPad ? 23 : 18
 }
