@@ -96,11 +96,24 @@ struct AddGeckoView: View {
 
                     // 생일, 입양일
                     HStack(spacing: .defaultSpacing) {
-                        DateFieldView(title: "생일", date: $viewModel.birthDate)
+                        VStack(alignment: .leading) {
+                            Text("생일")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.accent)
+
+                            DateFieldView(date: $viewModel.birthDate)
+                        }
 
                         Spacer()
-
-                        DateFieldView(title: "입양일", date: $viewModel.adoptionDate)
+                        VStack(alignment: .leading) {
+                            Text("입양일")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.accent)
+                            
+                            DateFieldView(date: $viewModel.adoptionDate)
+                        }
                     }
 
                     // 부모 정보
@@ -132,18 +145,10 @@ struct AddGeckoView: View {
                 .padding(.defaultSpacing)
             }
             .safeAreaInset(edge: .bottom) {
-                Button {
+                SaveButton(color: .main, action: {
                     focusedField = nil
                     viewModel.saveGecko()
-                } label: {
-                    Text("저장")
-                        .font(.title3).fontWeight(.bold)
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(.main)
-                        .clipShape(RoundedRectangle(cornerRadius: .defaultRadius))
-                }
+                })
                 .padding(.horizontal, .defaultSpacing)
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -160,27 +165,6 @@ struct AddGeckoView: View {
                     dismiss()
                 }
             }
-        }
-    }
-}
-
-struct FormField: View {
-    let title: String
-    let placeholder: String
-    @Binding var text: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: .smallSpacing) {
-            Text(title)
-                .font(.headline)
-                .foregroundStyle(.accent)
-
-            TextField(placeholder, text: $text)
-                .padding(.smallSpacing)
-                .overlay(
-                    RoundedRectangle(cornerRadius: .smallRadius)
-                        .stroke(.secondary.opacity(0.8), lineWidth: 1)
-                )
         }
     }
 }

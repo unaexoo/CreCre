@@ -8,18 +8,12 @@
 import SwiftUI
 
 struct DateFieldView: View {
-    let title: String
     @Binding var date: Date
 
     @State private var isPresented: Bool = false
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(title)
-                .font(.headline)
-                .fontWeight(.semibold)
-                .foregroundStyle(.accent)
-
+        VStack {
             Button {
                 isPresented = true
             } label: {
@@ -33,7 +27,6 @@ struct DateFieldView: View {
                         .foregroundStyle(.secondary)
                 }
                 .padding(.vertical, .smallSpacing)
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .buttonStyle(.plain)
             .sheet(isPresented: $isPresented) {
