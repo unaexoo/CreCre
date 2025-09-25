@@ -28,7 +28,7 @@ struct HomeView: View {
                         Text("CreCre")
                             .font(.largeTitle)
                             .fontWeight(.bold)
-                            .foregroundStyle(.main)
+                            .foregroundStyle(.accent)
 
                         Spacer()
 
@@ -38,7 +38,7 @@ struct HomeView: View {
                             Image(systemName: "plus")
                                 .font(.title)
                                 .fontWeight(.bold)
-                                .foregroundStyle(.main)
+                                .foregroundStyle(.accent)
                                 .padding(.smallSpacing)
                         }
                         .glassEffect()
@@ -54,7 +54,7 @@ struct HomeView: View {
                                 Text(viewModel.weekNames[index])
                                     .font(.subheadline)
                                     .fontWeight(.medium)
-                                    .foregroundStyle(.accent)
+                                    .foregroundStyle(.sub)
 
                                 Text("\(date.day)")
                                     .font(.headline)
@@ -64,7 +64,7 @@ struct HomeView: View {
                                     .background {
                                         if isSelected {
                                             Circle()
-                                                .fill(.accent)
+                                                .fill(.main)
                                                 .matchedGeometryEffect(id: "backgroundCircle", in: namespace)
                                         }
                                     }
