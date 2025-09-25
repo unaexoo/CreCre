@@ -8,17 +8,10 @@
 import SwiftUI
 
 struct GeckoCardView: View {
-    enum DisplayStyle {
-        case home
-        case careLog
-    }
-
     let gecko: Gecko
-    let style: DisplayStyle
 
-    init(gecko: Gecko, style: DisplayStyle = .home) {
+    init(gecko: Gecko) {
         self.gecko = gecko
-        self.style = style
     }
 
     var body: some View {
@@ -48,12 +41,7 @@ struct GeckoCardView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
-                switch style {
-                case .home:
-                    homeStyleInfo
-                case .careLog:
-                    careLogStyleInfo
-                }
+                homeStyleInfo
             }
             Spacer()
         }
@@ -61,7 +49,7 @@ struct GeckoCardView: View {
         .clipShape(RoundedRectangle(cornerRadius: .defaultRadius))
         .overlay(
             RoundedRectangle(cornerRadius: .defaultRadius)
-                .stroke(.main, lineWidth: 2)
+                .stroke(.main, lineWidth: 0.5)
         )
     }
 
@@ -86,41 +74,5 @@ struct GeckoCardView: View {
             }
         }
     }
-
-    private var careLogStyleInfo: some View {
-        VStack(alignment: .leading, spacing: .smallSpacing) {
-            InfoRow(title: "생일", content: gecko.birthDate?.formattedDate() ?? "정보 없음")
-            InfoRow(title: "입양일", content: gecko.adoptedDate?.formattedDate() ?? "정보 없음")
-        }
-    }
 }
 
-// 정보 행을 위한 보조 뷰
-struct InfoRow: View {
-    let title: String
-    let content: String
-
-    var body: some View {
-        HStack {
-            Text(title)
-                .font(.subheadline)
-                .foregroundStyle(.accent)
-                .frame(width: 50, alignment: .leading)
-
-            Text(content)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-
-            Spacer()
-        }
-    }
-}
-
-// Date를 "yyyy.MM.dd" 형식의 문자열로 변환하는 Helper
-fileprivate extension Date {
-    func formattedDate() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy. MM. dd"
-        return formatter.string(from: self)
-    }
-}

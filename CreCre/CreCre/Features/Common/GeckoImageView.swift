@@ -10,7 +10,12 @@ import CoreData
 
 struct GeckoImageView: View {
     let gecko: Gecko
+    let imageSize: CGFloat
 
+    init(gecko: Gecko, imageSize: CGFloat = 130) {
+        self.gecko = gecko
+        self.imageSize = imageSize
+    }
     /// gecko.imagePath를 기반으로 불러온 최종 이미지
     private var loadedImage: Image? {
         // 1. imagePath가 비어있는지 확인
@@ -47,12 +52,12 @@ struct GeckoImageView: View {
                 .resizable()
                 .scaledToFill()
                 .clipShape(Circle())
-                .frame(width: 130, height: 130)
+                .frame(width: imageSize, height: imageSize)
         } else {
             Image(systemName: "lizard.circle.fill")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 130, height: 130)
+                .frame(width: imageSize, height: imageSize)
                 .foregroundStyle(.main)
         }
     }
