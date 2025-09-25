@@ -15,4 +15,10 @@ extension Date {
     func isSameDay(as otherDate: Date) -> Bool {
         return Calendar.current.isDate(self, inSameDayAs: otherDate)
     }
+    
+    func formattedDate() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy. MM. dd"
+        return formatter.string(from: self)
+    }
 }
