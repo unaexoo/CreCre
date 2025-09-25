@@ -9,32 +9,19 @@ import SwiftUI
 import CoreData
 
 struct HomeView: View {
-    @State private var selectedDate: Date = Date()
-    @Namespace private var namespace
+    @StateObject private var viewModel: HomeViewModel
 
-    // 1. @FetchRequest를 사용하여 모든 Gecko 데이터를 가져옵니다.
-    @Environment(\.managedObjectContext) private var context
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Gecko.name, ascending: true)],
-        animation: .default)
-    private var geckos: FetchedResults<Gecko>
+    @Namespace private var namespace
 
     /// 주 7일 그리드
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
-    /// 요일 표기(일~토)
-    private let weekNames = ["일", "월", "화", "수", "목", "금", "토"]
 
-    // 현재 선택된 날짜가 포함된 주의 모든 날짜(일~토)를 반환하는 함수
-    private func weekDays() -> [Date] {
-        let calendar = Calendar.current
-        guard let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: selectedDate)) else {
-            return []
-        }
-        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: startOfWeek) }
+    init(context: NSManagedObjectContext) {
+        _viewModel = StateObject(wrappedValue: HomeViewModel(context: context))
     }
 
     var body: some View {
-        NavigationStack{
+        NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: .largeSpacing) {
                     HStack {
@@ -42,11 +29,11 @@ struct HomeView: View {
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .foregroundStyle(.main)
-                        
+
                         Spacer()
-                        
+
                         NavigationLink {
-                            AddGeckoView()
+                            AddGeckoView(type: .add)
                         } label: {
                             Image(systemName: "plus")
                                 .font(.title)
@@ -57,19 +44,18 @@ struct HomeView: View {
                         .glassEffect()
                     }
                     .padding(.horizontal, .defaultSpacing)
-                    
+
                     LazyVGrid(columns: columns, spacing: .defaultSpacing) {
-                        let dates = weekDays()
-                        ForEach(dates.indices, id: \.self) { index in
-                            let date = dates[index]
-                            let isSelected = date.isSameDay(as: selectedDate)
-                            
+                        ForEach(viewModel.weekDays.indices, id: \.self) { index in
+                            let date = viewModel.weekDays[index]
+                            let isSelected = date.isSameDay(as: viewModel.selectedDate)
+
                             VStack(spacing: .smallSpacing) {
-                                Text(weekNames[index])
+                                Text(viewModel.weekNames[index])
                                     .font(.subheadline)
                                     .fontWeight(.medium)
                                     .foregroundStyle(.accent)
-                                
+
                                 Text("\(date.day)")
                                     .font(.headline)
                                     .fontWeight(isSelected ? .bold : .regular)
@@ -86,14 +72,14 @@ struct HomeView: View {
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 withAnimation(.spring()) {
-                                    selectedDate = date
+                                    viewModel.selectedDate = date
                                 }
                             }
                         }
                     }
                     .padding(.horizontal, .defaultSpacing)
-                    
-                    ForEach(geckos) { gecko in
+
+                    ForEach(viewModel.geckos) { gecko in
                         GeckoCardView(gecko: gecko)
                             .padding(.horizontal, .defaultSpacing)
                     }
@@ -101,9 +87,9 @@ struct HomeView: View {
                 .padding(.vertical)
             }
         }
-
     }
 }
+
 extension Gecko {
     public var lastWeight: Double? {
         guard let weightsSet = self.weights as? Set<Weight>, !weightsSet.isEmpty else {
@@ -206,7 +192,6 @@ struct GeckoCardView: View {
     namuWeights.grams = 33.8
     namuWeights.date = Date()
 
-    // 개체 1: 나무
     let namu = Gecko(context: context)
     namu.id = UUID()
     namu.name = "나무"
@@ -214,7 +199,7 @@ struct GeckoCardView: View {
     namu.imagePath = sampleImagePath
     namu.sex = 1
     namu.addToWeights(namuWeights)
-    // 개체 2: 뿌리
+
     let ppuri = Gecko(context: context)
     ppuri.id = UUID()
     ppuri.name = "쀼리"
@@ -222,7 +207,6 @@ struct GeckoCardView: View {
     ppuri.imagePath = sampleImagePath
     ppuri.sex = 1
 
-    // 개체 3: 대추
     let daechu = Gecko(context: context)
     daechu.id = UUID()
     daechu.name = "대추"
@@ -230,7 +214,7 @@ struct GeckoCardView: View {
     daechu.imagePath = nil
     daechu.sex = 0
 
-    return HomeView()
+    return HomeView(context: context)
         .environment(\.managedObjectContext, context)
 }
 
